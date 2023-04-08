@@ -18,7 +18,11 @@ namespace IdentityApp.Controllers
         public async Task<IActionResult> Get()
         {
             var result= await productService.GetProductListAsync();
-            return Ok(result);
+       
+            var response = result.Select(ProductResponse.FromProduct).ToList();
+
+            return Ok(response);
+       
         }
 
         [HttpPost("[action]")]

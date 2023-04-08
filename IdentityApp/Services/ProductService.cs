@@ -1,32 +1,29 @@
-﻿using IdentityApp.DTOs.ProductDto;
+﻿using AutoMapper;
+using IdentityApp.DTOs.ProductDto;
 
 namespace IdentityApp.Services
 {
     public class ProductService : IProductService
     {
+        private readonly IMapper mapper;
         private readonly DataContext dataContext;
 
-        public ProductService(DataContext dataContext)
+        public ProductService(IMapper mapper, DataContext dataContext)
         {
+            this.mapper = mapper;
             this.dataContext = dataContext;
         }
         public async Task<List<Product>> GetProductListAsync()
         {
-            var result = await dataContext.Products
+            var result = await dataContext.Products.Include(p => p.ProductImages)
                 .OrderByDescending(p=>p.Id).ToListAsync();
+
             return result;
         }
 
         public async Task CreateAsync(ProductRequest request)
         {
-            var result = new Product()
-            {
-                Name = request.Name,
-                Price = request.Price,
-                QuantityInStock = request.QuantityInStock,
-                Description = request.Description,
-                Type = request.Type,
-            };
+            var result = mapper.Map<Product>(request);
 
             await dataContext.Products.AddAsync(result);
             await dataContext.SaveChangesAsync();

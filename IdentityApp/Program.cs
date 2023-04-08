@@ -67,6 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 //ใช้ AutoRefac ลงทะเบียนโดยอัตโนมัติกรณีมีหลายๆ Service
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(containerBuilder =>
