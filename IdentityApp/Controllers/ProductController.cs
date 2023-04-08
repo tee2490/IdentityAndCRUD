@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IdentityApp.DTOs.ProductDto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApp.Controllers
 {
@@ -19,5 +20,20 @@ namespace IdentityApp.Controllers
             var result= await productService.GetProductListAsync();
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddProduct([FromForm] ProductRequest request)
+        {
+            await productService.CreateAsync(request);
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetTypes()
+        {
+            var result = await productService.GetTypeAsync();
+            return Ok(result);
+        }
+
     }
 }
