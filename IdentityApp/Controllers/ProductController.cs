@@ -49,7 +49,8 @@ namespace IdentityApp.Controllers
 
             if (result == null) return NotFound();
 
-            await productService.UpdateAsync(productRequest);
+            var resultUpdate = await productService.UpdateAsync(productRequest);
+            if (resultUpdate != null) return BadRequest(resultUpdate);
 
             return Ok();
         }

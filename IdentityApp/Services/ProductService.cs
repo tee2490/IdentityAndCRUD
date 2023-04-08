@@ -56,12 +56,43 @@ namespace IdentityApp.Services
             return result;
         }
 
-        public async Task UpdateAsync(ProductRequest request)
+        public async Task<string> UpdateAsync(ProductRequest request)
         {
-            var result = mapper.Map<Product>(request);
+            //ตรวจสอบและอัพโหลดไฟล์
+            (string errorMessage, List<string> imageNames) = await UploadImageAsync(request.FormFiles);
+            if (!string.IsNullOrEmpty(errorMessage)) return errorMessage;
 
+            var result = mapper.Map<Product>(request);
             dataContext.Products.Update(result);
             await dataContext.SaveChangesAsync();
+
+            //ตรวจสอบและจัดการกับไฟล์ที่ส่งเข้ามาใหม่
+            if (imageNames.Count > 0)
+            {
+                var images = new List<ProductImage>();
+                foreach (var image in imageNames)
+                {
+                    images.Add(new ProductImage { ProductId = result.Id, Image = image });
+                }
+
+                //ลบไฟล์เดิม
+                var oldImages = await dataContext.ProductImages
+                    .Where(p => p.ProductId == result.Id).ToListAsync();
+                if (oldImages != null)
+                {
+                    //ลบไฟล์ใน database
+                    dataContext.ProductImages.RemoveRange(oldImages);
+
+                    //ลบไฟล์ในโฟลเดอร์
+                    var files = oldImages.Select(p => p.Image).ToList();
+                    await uploadFileService.DeleteFileImages(files);
+                }
+
+                //ใส่ไฟล์เข้าไปใหม่
+                await dataContext.ProductImages.AddRangeAsync(images);
+                await dataContext.SaveChangesAsync();
+            }
+            return null;
         }
 
         public async Task DeleteAsync(Product product)
