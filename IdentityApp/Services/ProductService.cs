@@ -97,6 +97,19 @@ namespace IdentityApp.Services
 
         public async Task DeleteAsync(Product product)
         {
+            //ค้นหาและลบไฟล์ภาพ
+            var oldImages = await dataContext.ProductImages
+                .Where(p => p.ProductId == product.Id).ToListAsync();
+            if (oldImages != null)
+            {
+                //ลบไฟล์ใน database
+                dataContext.ProductImages.RemoveRange(oldImages);
+
+                //ลบไฟล์ในโฟลเดอร์
+                var files = oldImages.Select(p => p.Image).ToList();
+                await uploadFileService.DeleteFileImages(files);
+            }
+
             dataContext.Products.Remove(product);
             await dataContext.SaveChangesAsync();
         }
