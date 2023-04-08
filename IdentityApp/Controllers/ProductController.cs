@@ -28,7 +28,10 @@ namespace IdentityApp.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> AddProduct([FromForm] ProductRequest request)
         {
-            await productService.CreateAsync(request);
+            var result = await productService.CreateAsync(request);
+
+            if (result != null) return BadRequest(result);
+
             return Ok();
         }
 
