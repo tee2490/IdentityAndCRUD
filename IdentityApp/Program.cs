@@ -77,6 +77,15 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(contain
     .AsImplementedInterfaces();
 }));
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigins,
+    policy =>
+    {
+        policy.AllowAnyOrigin()
+        .AllowAnyMethod().
+        AllowAnyHeader();
+    }));
+
 var app = builder.Build();
 
 #region  //สร้างฐานข้อมูลอัตโนมัติ
@@ -102,6 +111,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
