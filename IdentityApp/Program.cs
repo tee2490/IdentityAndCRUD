@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IdentityApp.Services;
+using Autofac.Extensions.DependencyInjection;
+using Autofac;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,10 +66,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                        });
 
 builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<IAccountService,AccountService>();
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IProductService,ProductService>();
 builder.Services.AddHttpContextAccessor();
+
+//ใช้ AutoRefac ลงทะเบียนโดยอัตโนมัติกรณีมีหลายๆ Service
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(containerBuilder =>
+{
+    containerBuilder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+    .Where(t => t.Name.EndsWith("Service") || t.Name.EndsWith("Test"))
+    .AsImplementedInterfaces();
+}));
 
 var app = builder.Build();
 
