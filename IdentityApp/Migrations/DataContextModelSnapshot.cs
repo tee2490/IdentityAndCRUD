@@ -87,6 +87,105 @@ namespace IdentityApp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("IdentityApp.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("QuantityInStock")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Test",
+                            Name = "Product01",
+                            Price = 10L,
+                            QuantityInStock = 1,
+                            Type = "food"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Test",
+                            Name = "Product02",
+                            Price = 10L,
+                            QuantityInStock = 1,
+                            Type = "food"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Test",
+                            Name = "Product03",
+                            Price = 10L,
+                            QuantityInStock = 1,
+                            Type = "food"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Test",
+                            Name = "Product04",
+                            Price = 10L,
+                            QuantityInStock = 1,
+                            Type = "food"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Test",
+                            Name = "Product05",
+                            Price = 10L,
+                            QuantityInStock = 1,
+                            Type = "food"
+                        });
+                });
+
+            modelBuilder.Entity("IdentityApp.Models.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -116,13 +215,13 @@ namespace IdentityApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "db9f4f8e-e313-41df-881f-a6e2d5d84e78",
+                            Id = "7b469c1e-5aa0-4282-bc5b-e78e1fc9fbb0",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "8a53bb0e-ee8b-491d-b7ff-de4f8a9c7c5d",
+                            Id = "efce7bae-3efc-470f-a802-b8e26668bc26",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -234,6 +333,17 @@ namespace IdentityApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("IdentityApp.Models.ProductImage", b =>
+                {
+                    b.HasOne("IdentityApp.Models.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -283,6 +393,11 @@ namespace IdentityApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("IdentityApp.Models.Product", b =>
+                {
+                    b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618
         }

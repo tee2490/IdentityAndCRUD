@@ -4,12 +4,15 @@ global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using IdentityApp.Setvices.IService;
+global using IdentityApp.Services.IService;
+
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using IdentityApp.Setvices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using IdentityApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +65,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IAccountService,AccountService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IProductService,ProductService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
