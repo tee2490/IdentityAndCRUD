@@ -39,5 +39,48 @@ namespace IdentityApp.Controllers
             return Ok(result);
         }
 
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateProduct([FromForm] ProductRequest productRequest)
+        {
+            var result = await productService.GetByIdAsync((int)productRequest.Id);
+
+            if (result == null) return NotFound();
+
+            await productService.UpdateAsync(productRequest);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProduct(int id)
+        {
+            var result = await productService.GetByIdAsync(id);
+
+            if (result == null) return NotFound();
+
+            await productService.DeleteAsync(result);
+
+            return Ok(new { status = "Deleted", result });
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> SearchProduct([FromQuery] string name = "")
+        {
+            var result = (await productService.SearchAsync(name))
+                .Select(ProductResponse.FromProduct).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            var result = await productService.GetByIdAsync(id);
+
+            if (result == null) return NotFound();
+
+            return Ok(ProductResponse.FromProduct(result));
+        }
+
     }
 }

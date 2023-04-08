@@ -36,5 +36,36 @@ namespace IdentityApp.Services
             return result;
         }
 
+        public async Task UpdateAsync(ProductRequest request)
+        {
+            var result = mapper.Map<Product>(request);
+
+            dataContext.Products.Update(result);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Product product)
+        {
+            dataContext.Products.Remove(product);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task<List<Product>> SearchAsync(string name)
+        {
+            var result = await dataContext.Products.Include(p => p.ProductImages)
+                .Where(p => p.Name.Contains(name))
+                .ToListAsync();
+            return result;
+        }
+
+        public async Task<Product> GetByIdAsync(int id)
+        {
+            var result = await dataContext.Products.Include(p => p.ProductImages)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return result;
+        }
+
     }
 }
